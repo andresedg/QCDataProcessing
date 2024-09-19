@@ -82,3 +82,20 @@ L1_coil_X, L1_coil_Y, L2_coil_X, L2_coil_Y, C_coil_X, C_coil_Y, ...
 Ensure that the `DATE` and `TIME` columns exist and are in the format `MM/DD/YY HH:MM:SS.FFF`.
 
 ## License
+
+## Pushing changes from local repository
+Stage the changes:
+
+```bash
+git add .
+```
+```bash
+git commit -m "Description of your changes"
+```
+```bash
+git push origin main
+```
+After you push your changes, anyone who has access to the repository can run the following to get your updates:
+```bash
+git pull
+```
