@@ -81,8 +81,6 @@ L1_coil_X, L1_coil_Y, L2_coil_X, L2_coil_Y, C_coil_X, C_coil_Y, ...
 
 Ensure that the `DATE` and `TIME` columns exist and are in the format `MM/DD/YY HH:MM:SS.FFF`.
 
-## License
-
 ## Pushing changes from local repository
 Stage the changes:
 
