@@ -249,3 +249,4 @@ match sensorSelec.lower():
         export_sensor_data(sensor_data,'R2')
     case _:
         print("Invalid sensor selected. Please choose L1, L2, C, R1, or R2.")
+    
