@@ -1,2 +1,0 @@
-# QCDataProcessing
-QC Data Processing
