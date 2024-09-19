@@ -10,7 +10,7 @@ This Python script processes and analyzes sensor data by grouping it, finding pe
 - Groups data by different sensor groups.
 - Identifies peaks in sensor readings.
 - Plots sensor data and identified peaks.
-- Allows exporting data for individual sensors (In Progress).
+- Allows exporting data for individual sensors.
 
 ## Prerequisites
 

@@ -195,7 +195,7 @@ def plot_sensor_data(sensor_data, sensor_name):
             # Plotting the data for the selected sensor
             plt.figure(figsize=(10, 6))
             plt.plot(sensor_data['DATE'], sensor_data['CH_1'].astype('Float64'), color='blue')
-            plt.title(f"{sensor_name} CH_1 Data")
+            plt.title(f"Sensor {sensor_name}: CH_1 Data")
             plt.xlabel('Date')
             plt.ylabel('Amplitude')
             plt.xticks(rotation=45)
