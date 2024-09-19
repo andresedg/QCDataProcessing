@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -190,7 +189,7 @@ def merge_sensor(sensor_name, coil_x, coil_y, group_num):
 # Function to plot sensor data
 def plot_sensor_data(sensor_data, sensor_name):
     try:
-        plot_op = input("Do you want to plot the data? (Y/N): ").lower()
+        plot_op = input("Do you want to plot the data? (Y/N): \n").lower()
         if plot_op == 'y':
             # Plotting the data for the selected sensor
             plt.figure(figsize=(10, 6))
@@ -217,36 +216,40 @@ def export_sensor_data(sensor_data, sensor_name):
             sensor_data_for_export.to_csv(filename, sep=' ', index=False, header=True)
             print(f"Data exported successfully to {filename}")
         else:
-            print(f"No data exported for {sensor_name}.")
+            print(f"No data exported for sensor {sensor_name}.")
     except Exception as e:
         print(f"Error while exporting: {e}")
 
+while True:
+    sensorSelec = input('What sensor do you want to work with? (L1, L2, C, R1, R2) or type "exit" to quit:\n')
 
-sensorSelec = input('What sensor do you want to work with? (L1, L2, C, R1, R2)\n')
+    # Exit condition
+    if sensorSelec.lower() == 'exit':
+        print("Exiting the program...")
+        break
 
-# Match case for different sensors, passing specific coil column names
-match sensorSelec.lower():
-    case 'l1':
-        sensor_data = merge_sensor('L1', 'L1_coil_X', 'L1_coil_Y', 0)    
-        plot_sensor_data(sensor_data,'L1')
-        export_sensor_data(sensor_data,'L1')
-    case 'l2':
-        sensor_data = merge_sensor('L2', 'L2_coil_X', 'L2_coil_Y', 1)
-        plot_sensor_data(sensor_data,'L2')
-        export_sensor_data(sensor_data,'L2')
-    case 'c':
-        sensor_data = merge_sensor('C', 'C_coil_X', 'C_coil_Y', 2)
-        plot_sensor_data(sensor_data,'C')
-        export_sensor_data(sensor_data,'C')
-    case 'r1':
-        sensor_data = merge_sensor('R1', 'R1_coil_X', 'R1_coil_Y', 3)
-        plot_op = input("Do you want to plot the data? (Y/N): ").lower()
-        plot_sensor_data(sensor_data,'R1')
-        export_sensor_data(sensor_data,'R1')
-    case 'r2':
-        sensor_data = merge_sensor('R2', 'R2_coil_X', 'R2_coil_Y', 4)
-        plot_sensor_data(sensor_data,'R2')
-        export_sensor_data(sensor_data,'R2')
-    case _:
-        print("Invalid sensor selected. Please choose L1, L2, C, R1, or R2.")
-    
+    # Match case for different sensors, passing specific coil column names
+    match sensorSelec.lower():
+        case 'l1':
+            sensor_data = merge_sensor('L1', 'L1_coil_X', 'L1_coil_Y', 0)    
+            plot_sensor_data(sensor_data,'L1')
+            export_sensor_data(sensor_data,'L1')
+        case 'l2':
+            sensor_data = merge_sensor('L2', 'L2_coil_X', 'L2_coil_Y', 1)
+            plot_sensor_data(sensor_data,'L2')
+            export_sensor_data(sensor_data,'L2')
+        case 'c':
+            sensor_data = merge_sensor('C', 'C_coil_X', 'C_coil_Y', 2)
+            plot_sensor_data(sensor_data,'C')
+            export_sensor_data(sensor_data,'C')
+        case 'r1':
+            sensor_data = merge_sensor('R1', 'R1_coil_X', 'R1_coil_Y', 3)
+            plot_sensor_data(sensor_data,'R1')
+            export_sensor_data(sensor_data,'R1')
+        case 'r2':
+            sensor_data = merge_sensor('R2', 'R2_coil_X', 'R2_coil_Y', 4)
+            plot_sensor_data(sensor_data,'R2')
+            export_sensor_data(sensor_data,'R2')
+        case _:
+            print("Invalid sensor selected. Please choose L1, L2, C, R1, or R2.")
+   
