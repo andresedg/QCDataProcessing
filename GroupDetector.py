@@ -164,6 +164,8 @@ if plotResponse == 'Y' or plotResponse == 'y':
     g5plot.set_title("Group 5")
     g5plot.set_xticklabels([])
     fig.tight_layout()
+    fig.set_figheight(6)
+    fig.set_figwidth(10)
     plt.show()
 else:   print("Moving into sensor exporting section...\n")
 
