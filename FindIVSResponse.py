@@ -51,7 +51,7 @@ peaks.reset_index(drop=True, inplace=True)
 
 printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
 if printOp == "y":
-    print(peaks.iloc[0])
+    print(peaks[['CH_1', 'DATE']])
 
 """PLOTTING"""
 
