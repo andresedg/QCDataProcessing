@@ -20,8 +20,10 @@ colnames = ['L1_coil_X', 'L1_coil_Y', 'L2_coil_X', 'L2_coil_Y', 'C_coil_X',
 try:
     # Attempt to read the file using Pandas
     df = pd.read_table(filename, sep=r"\s+", skiprows=[0], names=colnames)
+    dateOfData = df['DATE'].iloc[1]
+    dateOfData = dateOfData.replace('/','')
     # If successful, display the first few rows
-    print("File loaded successfully! \n")
+    print(f"File loaded successfully! This is the date: {dateOfData}\n")
 
 except Exception as e:
     # If there is any error, print an error message
@@ -213,12 +215,13 @@ def export_sensor_data(sensor_data, sensor_name):
         if export_op.lower() == 'y':
             # Prepare the data for export (XYZ format with coil X and Y values)
             sensor_data_for_export = sensor_data
-            filename = f"{sensor_name}_sensor_data.xyz"
+            filename = f"/{dateOfData}_{sensor_name}_sensor_data.xyz"
             # Save the file in .xyz format
-            sensor_data_for_export.to_csv(filename, sep=' ', index=False, header=True)
-            print(f"Data exported successfully to {filename}")
+            filedirectoyry = input('Please enter the path of the folder: ')
+            sensor_data_for_export.to_csv(filedirectoyry + filename, sep=' ', index=False, header=True)
+            print(f"Data exported successfully to {filename}\n")
         else:
-            print(f"No data exported for sensor {sensor_name}.")
+            print(f"No data exported for sensor {sensor_name}.\n")
     except Exception as e:
         print(f"Error while exporting: {e}")
 
