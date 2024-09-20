@@ -23,7 +23,7 @@ try:
     dateOfData = df['DATE'].iloc[1]
     dateOfData = dateOfData.replace('/','')
     # If successful, display the first few rows
-    print(f"File loaded successfully! This is the date: {dateOfData}\n")
+    print(f"File loaded successfully!\n")
 
 except Exception as e:
     # If there is any error, print an error message
@@ -257,4 +257,3 @@ while True:
             export_sensor_data(sensor_data,'R2')
         case _:
             print("Invalid sensor selected. Please choose L1, L2, C, R1, or R2.")
-            
