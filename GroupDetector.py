@@ -32,8 +32,8 @@ except Exception as e:
 """CLEANING AND FIXING FORMAT"""
 # Checking if 'DATE' and 'TIME' columns exist to proceed
 if 'DATE' in df.columns and 'TIME' in df.columns:
-    df['DATE'] = df['DATE'] + ' ' + df['TIME']
-    df['DATE'] = pd.to_datetime(df['DATE'], format='%m/%d/%y %H:%M:%S.%f')
+    df['DATETIME'] = df['DATE'] + ' ' + df['TIME']
+    df['DATETIME'] = pd.to_datetime(df['DATETIME'], format='%m/%d/%y %H:%M:%S.%f')
 else:
     print("Error: 'DATE' and/or 'TIME' columns not found.")
 
@@ -51,23 +51,23 @@ if printOp == "y":
 # Identify each group and create sub dataframes
 group1 = df[['CH_1', 'CH_2', 'CH_3', 'CH_4',
              'EM61_CURRENT', 'EM61_VOLT', 'EM61_DELAY',
-             'LINE', 'MARK', 'DATE']]
+             'LINE', 'MARK', 'DATETIME']]
 
 group2 = df[['CH_1.1', 'CH_2.1', 'CH_3.1','CH_4.1',
              'EM61_CURRENT.1', 'EM61_VOLT.1','EM61_DELAY.1',
-             'LINE', 'MARK', 'DATE']]
+             'LINE', 'MARK', 'DATETIME']]
 
 group3 = df[['CH_1.2','CH_2.2', 'CH_3.2', 'CH_4.2', 
              'EM61_CURRENT.2', 'EM61_VOLT.2','EM61_DELAY.2',
-             'LINE', 'MARK', 'DATE']]
+             'LINE', 'MARK', 'DATETIME']]
 
 group4 = df[['CH_1.3', 'CH_2.3', 'CH_3.3', 'CH_4.3',
              'EM61_CURRENT.3', 'EM61_VOLT.3', 'EM61_DELAY.3',
-             'LINE', 'MARK', 'DATE']]
+             'LINE', 'MARK', 'DATETIME']]
 
 group5 = df[['CH_1.4', 'CH_2.4','CH_3.4', 'CH_4.4', 
              'EM61_CURRENT.4', 'EM61_VOLT.4', 'EM61_DELAY.4',
-             'LINE', 'MARK', 'DATE']]
+             'LINE', 'MARK', 'DATETIME']]
 
 # Remove NaN valuesin CH_1 column from each group.
 g1 = group1.dropna(subset=['CH_1'])
@@ -91,11 +91,11 @@ g3peaks_idx,_= find_peaks(g3['CH_1'].iloc[0:800],prominence=100)
 g4peaks_idx,_= find_peaks(g4['CH_1'].iloc[0:800],prominence=100)
 g5peaks_idx,_= find_peaks(g5['CH_1'].iloc[0:800],prominence=100)
 # Store peaks per group
-g1peaks = g1[['CH_1','DATE']].iloc[g1peaks_idx]
-g2peaks = g2[['CH_1','DATE']].iloc[g2peaks_idx]
-g3peaks = g3[['CH_1','DATE']].iloc[g3peaks_idx]
-g4peaks = g4[['CH_1','DATE']].iloc[g4peaks_idx]
-g5peaks = g5[['CH_1','DATE']].iloc[g5peaks_idx]
+g1peaks = g1[['CH_1','DATETIME']].iloc[g1peaks_idx]
+g2peaks = g2[['CH_1','DATETIME']].iloc[g2peaks_idx]
+g3peaks = g3[['CH_1','DATETIME']].iloc[g3peaks_idx]
+g4peaks = g4[['CH_1','DATETIME']].iloc[g4peaks_idx]
+g5peaks = g5[['CH_1','DATETIME']].iloc[g5peaks_idx]
 
 """DATAFRAME OF PEAKS"""
 # Adding the GROUPNUM column to each dataframe before concatenation
@@ -107,10 +107,10 @@ g5peaks['GROUPNUM'] = 5
 
 peaks = pd.concat([g1peaks, g2peaks, g3peaks, g4peaks, g5peaks])
 # Reordering the columns, placing GROUPNUM first
-peaks = peaks[['GROUPNUM', 'CH_1', 'DATE']]
+peaks = peaks[['GROUPNUM', 'CH_1', 'DATETIME']]
 
 # Sorting the dataframe by the DATE column first
-peaks = peaks.sort_values(by='DATE')
+peaks = peaks.sort_values(by='DATETIME')
 
 # Defining the list of sensor names in the correct order
 sensor_names = ['L1', 'L2', 'C', 'R1', 'R2']
@@ -119,7 +119,7 @@ sensor_names = ['L1', 'L2', 'C', 'R1', 'R2']
 peaks['SENSOR'] = sensor_names
 
 # Reordering columns in this specific order
-peaks = peaks[['SENSOR', 'GROUPNUM', 'CH_1', 'DATE']]
+peaks = peaks[['SENSOR', 'GROUPNUM', 'CH_1', 'DATETIME']]
 
 # Resetting the index again to keep it clean after sorting
 peaks.reset_index(drop=True, inplace=True)
@@ -141,28 +141,28 @@ if plotResponse == 'Y' or plotResponse == 'y':
     fig, (g1plot, g2plot,g3plot,g4plot,g5plot) = plt.subplots(5)
     fig.suptitle('5 Groups plot')
     # Group 1 subplot
-    g1plot.plot(g1['DATE'].iloc[0:800].astype(str),g1['CH_1'].iloc[0:800].astype('Float64'))
-    g1plot.plot(g1peaks['DATE'].astype(str),g1peaks['CH_1'].astype('Float64'),'o',c='r')
+    g1plot.plot(g1['DATETIME'].iloc[0:800].astype(str),g1['CH_1'].iloc[0:800].astype('Float64'))
+    g1plot.plot(g1peaks['DATETIME'].astype(str),g1peaks['CH_1'].astype('Float64'),'o',c='r')
     g1plot.set_title("Group 1")
     g1plot.set_xticklabels([])
     # Group 2 subplot
-    g2plot.plot(g2['DATE'].iloc[0:800].astype(str),g2['CH_1'].iloc[0:800].astype('Float64'),'tab:orange')
-    g2plot.plot(g2peaks['DATE'].astype(str),g2peaks['CH_1'].astype('Float64'),'o',c='r')
+    g2plot.plot(g2['DATETIME'].iloc[0:800].astype(str),g2['CH_1'].iloc[0:800].astype('Float64'),'tab:orange')
+    g2plot.plot(g2peaks['DATETIME'].astype(str),g2peaks['CH_1'].astype('Float64'),'o',c='r')
     g2plot.set_title("Group 2")
     g2plot.set_xticklabels([])
     # Group 3 subplot
-    g3plot.plot(g3['DATE'].iloc[0:800].astype(str),g3['CH_1'].iloc[0:800].astype('Float64'),'tab:green')
-    g3plot.plot(g3peaks['DATE'].astype(str),g3peaks['CH_1'].astype('Float64'),'o',c='r')
+    g3plot.plot(g3['DATETIME'].iloc[0:800].astype(str),g3['CH_1'].iloc[0:800].astype('Float64'),'tab:green')
+    g3plot.plot(g3peaks['DATETIME'].astype(str),g3peaks['CH_1'].astype('Float64'),'o',c='r')
     g3plot.set_title("Group 3")
     g3plot.set_xticklabels([])
     # Group 4 subplot
-    g4plot.plot(g4['DATE'].iloc[0:800].astype(str),g4['CH_1'].iloc[0:800].astype('Float64'),'tab:red')
-    g4plot.plot(g4peaks['DATE'].astype(str),g4peaks['CH_1'].astype('Float64'),'o',c='r')
+    g4plot.plot(g4['DATETIME'].iloc[0:800].astype(str),g4['CH_1'].iloc[0:800].astype('Float64'),'tab:red')
+    g4plot.plot(g4peaks['DATETIME'].astype(str),g4peaks['CH_1'].astype('Float64'),'o',c='r')
     g4plot.set_title("Group 4")
     g4plot.set_xticklabels([])
     # Group 5 subplot
-    g5plot.plot(g5['DATE'].iloc[0:800].astype(str),g5['CH_1'].iloc[0:800].astype('Float64'),'tab:purple')
-    g5plot.plot(g5peaks['DATE'].astype(str),g5peaks['CH_1'].astype('Float64'),'o',c='r')
+    g5plot.plot(g5['DATETIME'].iloc[0:800].astype(str),g5['CH_1'].iloc[0:800].astype('Float64'),'tab:purple')
+    g5plot.plot(g5peaks['DATETIME'].astype(str),g5peaks['CH_1'].astype('Float64'),'o',c='r')
     g5plot.set_title("Group 5")
     g5plot.set_xticklabels([])
     fig.tight_layout()
@@ -183,6 +183,7 @@ def merge_sensor(sensor_name, coil_x, coil_y, group_num):
         group_merge = groups_dict[peaks['GROUPNUM'].iloc[group_num]]
         # Perform the merge with the specific coil columns for that sensor
         sensor_data = pd.merge(df[[coil_x, coil_y]], group_merge, left_index=True, right_index=True)
+        sensor_data = pd.merge(sensor_data,df[['TIME','DATE']], left_index=True, right_index=True)
         sensor_data.reset_index(drop=True, inplace=True)
         return sensor_data
     except IndexError:
@@ -197,7 +198,7 @@ def plot_sensor_data(sensor_data, sensor_name):
         if plot_op == 'y':
             # Plotting the data for the selected sensor
             plt.figure(figsize=(10, 6))
-            plt.plot(sensor_data['DATE'], sensor_data['CH_1'].astype('Float64'), color='blue')
+            plt.plot(sensor_data['DATETIME'], sensor_data['CH_1'].astype('Float64'), color='blue')
             plt.title(f"Sensor {sensor_name}: CH_1 Data")
             plt.xlabel('Date')
             plt.ylabel('Amplitude')
