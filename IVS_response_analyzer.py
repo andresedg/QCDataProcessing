@@ -53,7 +53,10 @@ def EM61_5coil_process_file():
 
     printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
     if printOp1 == "y":
-        print(peaks[['CH_1', 'DATETIME']])
+        first_two_columns = df.columns[:2].tolist()
+        # Create a list of columns to print
+        columns_to_print = first_two_columns + ['CH_1', 'DATETIME']
+        print(peaks[columns_to_print])
 
     """PLOTTING"""
 
