@@ -50,7 +50,7 @@ def EM61_5coil_process_file():
     peaks = df.iloc[peaks_idx]
     # Reset rows index
     peaks.reset_index(drop=True, inplace=True)
-
+    # Printing peaks
     printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
     if printOp1 == "y":
         first_two_columns = df.columns[:2].tolist()
@@ -167,8 +167,8 @@ def EM61_process_file():
 def main_menu():
     while True:
         print("What type of file are you going to process?")
-        print("1) Single EM61 sensor file (from 5 Coil System)")
-        print("2) Regular EM61 file")
+        print("1) IVS: Single EM61 sensor file (from 5 Coil System)")
+        print("2) IVS: Regular EM61 file")
         print("3) Exit")
         menu_choice = input("Enter your option number or type 'Exit' to close the program:\n").lower()
 
