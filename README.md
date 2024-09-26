@@ -21,11 +21,12 @@ Before running the script, ensure you have the following Python packages install
 - `pandas`
 - `matplotlib`
 - `scipy`
+- `pyproj`
 
 You can install them using pip:
 
 ```bash
-pip install numpy pandas matplotlib scipy
+pip install numpy pandas matplotlib scipy pyproj
 ```
 
 ## How to Use

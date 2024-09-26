@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
+from pyproj import Transformer
+
+# Set Pandas to display floating-point numbers in a more familiar format
+pd.set_option('display.float_format', '{:.2f}'.format)
 
 # Function to process each sensor of 5 coil system. Exproted from 'multi_sensor_data_processor.py' tool 
 def EM61_5coil_process_file():
@@ -25,7 +29,7 @@ def EM61_5coil_process_file():
         # If there is any error, print an error message
         print(f"Error: Unable to read the file. {e}")
 
-    """CLEANING AND FIXING FORMAT"""
+    '''CLEANING AND FIXING FORMAT'''
 
     # Checking if 'DATE' and 'TIME' columns exist to proceed
     if 'DATE' in df.columns and 'TIME' in df.columns:
@@ -44,21 +48,43 @@ def EM61_5coil_process_file():
         print(df.head())
         print('\n')
 
+    '''COORDINATE TRANSFORMATION'''
+
+    # Assuming the first two columns are the coordinates (e.g., Easting and Northing)
+    x_coords = df.iloc[:, 0]  # First column
+    y_coords = df.iloc[:, 1]  # Second column
+
+    # Define the source and target coordinate systems (you can change EPSG codes as needed)
+    transformer = Transformer.from_crs("EPSG:4326", "EPSG:32612", always_xy=True)  # WGS84 to UTM Zone 12N
+
+    # Apply transformation to each pair of coordinates
+    transformed_coords = [transformer.transform(x, y) for x, y in zip(x_coords, y_coords)]
+
+    # Split transformed coordinates into X and Y and add them as new columns
+    df['X'], df['Y'] = zip(*transformed_coords)
+
+    print("Coordinate transformation completed! New 'X' and 'Y' columns added.\n")
+
+    '''PEAKS FINDING'''
+
     # Find peak indexes
     peaks_idx,_ = find_peaks(df['CH_1'],prominence=100)
     # Store peaks
     peaks = df.iloc[peaks_idx]
     # Reset rows index
     peaks.reset_index(drop=True, inplace=True)
-    # Printing peaks
-    printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
-    if printOp1 == "y":
-        first_two_columns = df.columns[:2].tolist()
-        # Create a list of columns to print
-        columns_to_print = first_two_columns + ['CH_1', 'DATETIME']
-        print(peaks[columns_to_print])
 
-    """PLOTTING"""
+    #If there is no peaks it goes back to the menu. For SSR files
+    if peaks.empty:
+        print('Exiting to the menu...\n')
+        plt.figure(figsize=(10, 6))
+        plt.plot(df['DATETIME'],df['STD-4-2'],c='b')
+        plt.title('STD-4-2 Data')
+        plt.xticks(rotation=45)
+        plt.show()
+        return False
+
+    '''PLOTTING'''
 
     plotResponse = input("Enter 'Y' if you want to plot the data: \n").lower()
 
@@ -72,6 +98,13 @@ def EM61_5coil_process_file():
         plt.xticks(rotation=45)
         plt.show()
     else:   print("Closing the program")
+
+    # Printing peaks
+    printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
+    if printOp1 == "y":
+        columns_to_print =  ['X', 'Y', 'CH_1', 'DATETIME']
+        print(peaks[columns_to_print])
+        print('\n')
 
      # Ask if the user wants to work on another file
     continue_choice = input("Would you like to process another sensor file or go to the menu? (Y/N): \n").lower()
@@ -108,7 +141,7 @@ def EM61_process_file():
         print(df.head())
         print('\n')
 
-    """CLEANING AND FIXING FORMAT"""
+    '''CLEANING AND FIXING FORMAT'''
     # Convert the TIME column to timestamp format
     df['TIME'] = pd.to_datetime(df['TIME'], format='%H:%M:%S.%f').dt.time   
     try:
@@ -118,7 +151,25 @@ def EM61_process_file():
 
     # Replacing empty spaces for NaN values
     df = df.replace(r'^\s*$', np.nan, regex=True)
+    
+    '''COORDINATE TRANSFORMATION'''
 
+    # Assuming the first two columns are the coordinates (e.g., Easting and Northing)
+    x_coords = df.iloc[:, 0]  # First column
+    y_coords = df.iloc[:, 1]  # Second column
+
+    # Define the source and target coordinate systems (you can change EPSG codes as needed)
+    transformer = Transformer.from_crs("EPSG:4326", "EPSG:32612", always_xy=True)  # WGS84 to UTM Zone 12N
+
+    # Apply transformation to each pair of coordinates
+    transformed_coords = [transformer.transform(x, y) for x, y in zip(x_coords, y_coords)]
+
+    # Split transformed coordinates into X and Y and add them as new columns
+    df['X'], df['Y'] = zip(*transformed_coords)
+
+    print("Coordinate transformation completed! New 'X' and 'Y' columns added.\n")
+
+    '''PEAKS FINDING'''
      # Find peak indexes
     peaks_idx,_ = find_peaks(df['STD-4-2'],prominence=100)
     # Store peaks
@@ -126,12 +177,9 @@ def EM61_process_file():
     # Reset rows index
     peaks.reset_index(drop=True, inplace=True)
 
-    printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
-    if printOp1 == "y":
-        print(peaks[['EAST', 'NORTH','STD-4-2', 'TIME']])
-
+    #If there is no peaks it goes back to the menu. For SSR files
     if peaks.empty:
-        print('There is no peaks to plot. Closing the programm... \n ')
+        print('Exiting to the menu...\n')
         plt.figure(figsize=(10, 6))
         plt.plot(df['DATETIME'],df['STD-4-2'],c='b')
         plt.title('STD-4-2 Data')
@@ -139,7 +187,7 @@ def EM61_process_file():
         plt.show()
         return False
 
-    """PLOTTING"""
+    '''PLOTTING'''
 
     plotResponse = input("Enter 'Y' if you want to plot the data: \n").lower()
 
@@ -153,6 +201,13 @@ def EM61_process_file():
         plt.xticks(rotation=45)
         plt.show()
     else:   print("Closing the program")
+
+    # Printing peaks
+    printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
+    if printOp1 == "y":
+        print(peaks[['X', 'Y','STD-4-2', 'TIME']])
+        print('\n')
+
 
      # Ask if the user wants to work on another file
     continue_choice = input("Would you like to process another sensor file or go to the menu? (Y/N): \n").lower()
