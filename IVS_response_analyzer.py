@@ -64,6 +64,22 @@ def EM61_5coil_process_file():
     df['X'], df['Y'] = zip(*transformed_coords)
 
     print("Coordinate transformation completed! New 'X' and 'Y' columns added.\n")
+    print(f"Transformation: {transformer} \n")
+
+    '''CALCULATIONS'''
+    # Calculate rolling statistic (median) without window shrinking
+    df['CH_1_med'] = df['CH_1'].rolling(window=301, min_periods=1, center=True).median()
+    df['CH_2_med'] = df['CH_2'].rolling(window=301, min_periods=1, center=True).median()
+    df['CH_3_med'] = df['CH_3'].rolling(window=301, min_periods=1, center=True).median()
+    df['CH_4_med'] = df['CH_4'].rolling(window=301, min_periods=1, center=True).median()
+    
+    # Calculate demedian. CH1_1_demed = CH_1 - CH_1_med
+    df['CH_1_demed'] = df['CH_1'] - df['CH_1_med']
+    df['CH_2_demed'] = df['CH_2'] - df['CH_2_med']
+    df['CH_3_demed'] = df['CH_3'] - df['CH_3_med']
+    df['CH_4_demed'] = df['CH_4'] - df['CH_4_med']
+
+    print(df[['CH_1_med','CH_2_med','CH_3_med','CH_4_med']])
 
     '''PEAKS FINDING'''
 
@@ -76,10 +92,10 @@ def EM61_5coil_process_file():
 
     #If there is no peaks it goes back to the menu. For SSR files
     if peaks.empty:
-        print('Exiting to the menu...\n')
+        print('No peaks detected. Exiting to the menu...\n')
         plt.figure(figsize=(10, 6))
-        plt.plot(df['DATETIME'],df['STD-4-2'],c='b')
-        plt.title('STD-4-2 Data')
+        plt.plot(df['DATETIME'],df['CH_1'],c='b')
+        plt.title('CH_1 Data')
         plt.xticks(rotation=45)
         plt.show()
         return False
@@ -102,7 +118,7 @@ def EM61_5coil_process_file():
     # Printing peaks
     printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
     if printOp1 == "y":
-        columns_to_print =  ['X', 'Y', 'CH_1', 'DATETIME']
+        columns_to_print =  ['X', 'Y', 'CH_1', 'CH_1_med', 'TIME']
         print(peaks[columns_to_print])
         print('\n')
 
@@ -168,6 +184,15 @@ def EM61_process_file():
     df['X'], df['Y'] = zip(*transformed_coords)
 
     print("Coordinate transformation completed! New 'X' and 'Y' columns added.\n")
+    print(f"Transformation: {transformer} \n")
+
+    '''CALCULATIONS'''
+    '''Modify this section: Following the QC process'''
+    # Calculate rolling statistic (median) without window shrinking
+    df['STD-4-2_med'] = df['STD-4-2'].rolling(window=301, min_periods=1, center=True).median()
+    
+    # Calculate demedian. CH1_1_demed = CH_1 - CH_1_med
+    df['STD-4-2_demed'] = df['STD-4-2'] - df['STD-4-2_med']
 
     '''PEAKS FINDING'''
      # Find peak indexes
@@ -179,7 +204,7 @@ def EM61_process_file():
 
     #If there is no peaks it goes back to the menu. For SSR files
     if peaks.empty:
-        print('Exiting to the menu...\n')
+        print('No peaks detected. Exiting to the menu...\n')
         plt.figure(figsize=(10, 6))
         plt.plot(df['DATETIME'],df['STD-4-2'],c='b')
         plt.title('STD-4-2 Data')
@@ -205,9 +230,8 @@ def EM61_process_file():
     # Printing peaks
     printOp1 = input("Enter 'Y' if you want to see the peaks of the signal: \n").lower()
     if printOp1 == "y":
-        print(peaks[['X', 'Y','STD-4-2', 'TIME']])
+        print(peaks[['X', 'Y','STD-4-2', 'STD-4-2_med', 'TIME']])
         print('\n')
-
 
      # Ask if the user wants to work on another file
     continue_choice = input("Would you like to process another sensor file or go to the menu? (Y/N): \n").lower()
@@ -240,7 +264,6 @@ def main_menu():
             break
         else:
             print("Invalid selection. Please try again.\n")
-
 
 # Run the program
 if __name__ == "__main__":
