@@ -77,12 +77,12 @@ def process_file():
     g4 = group4.dropna(subset=['CH_1.3'])
     g5 = group5.dropna(subset=['CH_1.4'])
 
-    # Renaming columns to ensure consistent naming for CH_1
-    g1 = g1.rename(columns={'CH_1': 'CH_1'})
-    g2 = g2.rename(columns={'CH_1.1': 'CH_1'})
-    g3 = g3.rename(columns={'CH_1.2': 'CH_1'})
-    g4 = g4.rename(columns={'CH_1.3': 'CH_1'})
-    g5 = g5.rename(columns={'CH_1.4': 'CH_1'})
+    # Renaming columns to ensure consistent naming for CH_1, CH_2, CH_3, CH_4
+    g1 = g1.rename(columns={'CH_1': 'CH_1', 'CH_2': 'CH_2', 'CH_3': 'CH_3', 'CH_4': 'CH_4'})
+    g2 = g2.rename(columns={'CH_1.1': 'CH_1', 'CH_2.1': 'CH_2', 'CH_3.1': 'CH_3', 'CH_4.1': 'CH_4'})
+    g3 = g3.rename(columns={'CH_1.2': 'CH_1', 'CH_2.2': 'CH_2', 'CH_3.2': 'CH_3', 'CH_4.2': 'CH_4'})
+    g4 = g4.rename(columns={'CH_1.3': 'CH_1', 'CH_2.3': 'CH_2', 'CH_3.3': 'CH_3', 'CH_4.3': 'CH_4'})
+    g5 = g5.rename(columns={'CH_1.4': 'CH_1', 'CH_2.4': 'CH_2', 'CH_3.4': 'CH_3', 'CH_4.4': 'CH_4'})
 
     """FINDING PEAK FOR EACH GROUP"""
     # Find peak indexes
