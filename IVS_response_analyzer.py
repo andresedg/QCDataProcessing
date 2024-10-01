@@ -7,8 +7,8 @@ from pyproj import Transformer
 # Set Pandas to display floating-point numbers in a more familiar format
 pd.set_option('display.float_format', '{:.2f}'.format)
 
-# Function to process each sensor of 5 coil system. Exproted from 'multi_sensor_data_processor.py' tool 
-def EM61_5coil_process_file():
+# Function to process each sensor of 5 coil system IVS files. Exproted from 'multi_sensor_data_processor.py' tool 
+def EM61_5coil_ivs_file():
     # Prompt the user to enter the file path
     filename = input("Please enter the full path of the file: ")
     print('\n')
@@ -131,8 +131,8 @@ def EM61_5coil_process_file():
         print("Exiting to the menu...\n")
         return False
 
-# Function to process EM61 regular files. Imported directly from EM61 and converted to .xyz
-def EM61_process_file():
+# Function to process EM61 regular IVS files. Imported directly from EM61 and converted to .xyz
+def EM61_ivs_file():
     # Prompt the user to enter the file path
     filename = input("Please enter the full path of the file: ")
     print('\n')
@@ -253,11 +253,11 @@ def main_menu():
 
         if menu_choice == '1':
             while True:
-                if not EM61_5coil_process_file():
+                if not EM61_5coil_ivs_file():
                     break
         elif menu_choice == '2':
             while True:
-                if not EM61_process_file():
+                if not EM61_ivs_file():
                     break
         elif menu_choice == '3' or menu_choice == 'exit':
             print('Closing the program...\n')
