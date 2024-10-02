@@ -5,7 +5,7 @@ from scipy.signal import find_peaks
 
 def process_file():
     # Prompt the user to enter the file path
-    filename = input("Please enter the full path of the file: ")
+    filepath = input("Please enter the full path of the file: ")
     print('\n')
     colnames = ['L1_coil_X', 'L1_coil_Y', 'L2_coil_X', 'L2_coil_Y', 'C_coil_X',
         'C_coil_Y', 'R1_coil_X', 'R1_coil_Y', 'R2_coil_X', 'R2_coil_Y',
@@ -20,7 +20,7 @@ def process_file():
 
     try:
         # Attempt to read the file using Pandas
-        df = pd.read_table(filename, sep=r"\s+", skiprows=[0], names=colnames)
+        df = pd.read_table(filepath, sep=r"\s+", skiprows=[0], names=colnames)
         dateOfData = df['DATE'].iloc[1]
         dateOfData = dateOfData.replace('/','')
         # If successful, display the first few rows
@@ -126,12 +126,11 @@ def process_file():
     peaks.reset_index(drop=True, inplace=True)
 
     # Enter 'Y' to show the sensors corresponding to each group
-    printOp1 = input("Enter 'Y' to show the sensors corresponding to each group: \n")
+    printOp1 = input("Enter 'Y' to show the sensors corresponding to each group: \n").lower()
 
-    if printOp1 == "Y" or printOp1 == "y":
+    if printOp1 == "y":
         print(peaks)
         print('\n')
-
 
     """PLOTTING"""
 
@@ -170,8 +169,18 @@ def process_file():
         fig.set_figheight(6)
         fig.set_figwidth(10)
         plt.show()
-    else:   print("Moving into sensor exporting section...\n")
+    else:   print("Moving into exporting section...\n")
 
+    exprotop = input("Enter 'Y' to export the group-sensor table: \n").lower()
+
+    if exprotop == "y":
+            try:
+                filedirectoyry = input('Please enter the path of the folder: ')
+                inputfilename = input('Please enter the name of the file (Date included already): ')
+                filename = f"/{dateOfData}_{inputfilename}.xlsx"
+                peaks.to_excel(filedirectoyry + filename, header=True)
+            except Exception as e:
+                print(f"Error while exporting: {e}")
 
     """STORING SENSORS IN DATAFRAMES FOR EXPORTING"""
     # Create a dictionary of the group dataframes
@@ -217,9 +226,11 @@ def process_file():
             if export_op.lower() == 'y':
                 # Prepare the data for export (XYZ format with coil X and Y values)
                 sensor_data_for_export = sensor_data
-                filename = f"/{dateOfData}_{sensor_name}_sensor_data.xyz"
-                # Save the file in .xyz format
+                # Ask the path and file name
                 filedirectoyry = input('Please enter the path of the folder: ')
+                inputfilename = input('Please enter the name of the file (Date included already): ')
+                filename = f"/{dateOfData}_{inputfilename}.xyz"
+                # File exported with custom name: Path + Date + Name + .xyz
                 sensor_data_for_export.to_csv(filedirectoyry + filename, sep=' ', index=False, header=True)
                 print(f"Data exported successfully to {filename}\n")
             else:
