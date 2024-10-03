@@ -1,6 +1,9 @@
+import os 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter.filedialog import askdirectory
 from scipy.signal import find_peaks
 
 def process_file():
@@ -169,23 +172,56 @@ def process_file():
         fig.set_figheight(6)
         fig.set_figwidth(10)
         plt.show()
-    else:   print("Moving into exporting section...\n")
 
+    '''EXPORTING GROUP-SENSOR TABLE SORTED'''
+    # Function to select a folder
+    def select_folder():
+        try:
+            root = tk.Tk()
+            root.withdraw()  # Hide the main window
+            filedirectory = askdirectory(title='Select folder')
+            root.destroy()
+            return filedirectory
+        except Exception as e:
+            print(f"Error during folder selection: {e}")
+            return None
+        
+    # Prompt to export group-sensor table
     exprotop = input("Enter 'Y' to export the group-sensor table: \n").lower()
 
     if exprotop == "y":
-            try:
-                filedirectoyry = input('Please enter the path of the folder: ')
-                inputfilename = input('Please enter the name of the file (Date included already): ')
-                filename = f"/{dateOfData}_{inputfilename}.xlsx"
-                peaks.to_excel(filedirectoyry + filename, header=True)
-            except Exception as e:
-                print(f"Error while exporting: {e}")
+        try:
+            print("Please select a folder...")
+            filedirectoyry = select_folder()
 
+            # Check if the folder selection was successful
+            if not filedirectoyry:
+                print("Folder selection failed or was canceled.")
+            else:
+                inputfilename = input('Please enter the name of the file (Date included already): \n')
+                sheet_name = input('Enter sheet name: \n')
+                filename = f"{filedirectoyry}/{dateOfData}_{inputfilename}.xlsx"
+                
+            # Check if file exists
+            if os.path.exists(filename):
+                with pd.ExcelWriter(filename, engine="openpyxl", mode="a") as writer:
+                    # Name the sheet based on the sensor or some identifier
+                    peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
+            else:
+                with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+                    # Create a new file with the first sheet
+                    peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
+
+            print(f"Data exported successfully to {filename}\n")
+
+        except Exception as e:
+            print(f"Error while exporting: {e}")
+
+    
     """STORING SENSORS IN DATAFRAMES FOR EXPORTING"""
     # Create a dictionary of the group dataframes
     groups_dict = {1: g1, 2: g2, 3: g3, 4: g4, 5: g5}
-
+    
     # Function to handle sensor merge with specific coil column names
     def merge_sensor(sensor_name, coil_x, coil_y, group_num):
         try:
@@ -227,7 +263,7 @@ def process_file():
                 # Prepare the data for export (XYZ format with coil X and Y values)
                 sensor_data_for_export = sensor_data
                 # Ask the path and file name
-                filedirectoyry = input('Please enter the path of the folder: ')
+                filedirectoyry = select_folder()
                 inputfilename = input('Please enter the name of the file (Date included already): ')
                 filename = f"/{dateOfData}_{inputfilename}.xyz"
                 # File exported with custom name: Path + Date + Name + .xyz
