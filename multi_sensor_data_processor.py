@@ -2,14 +2,11 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import tkinter as tk
-from tkinter.filedialog import askdirectory
 from scipy.signal import find_peaks
+import path_selector as ps # Function created in another py file (Not library)
 
 def process_file():
-    # Prompt the user to enter the file path
-    filepath = input("Please enter the full path of the file: ")
-    print('\n')
+    # Prompt the user to enter the file path    
     colnames = ['L1_coil_X', 'L1_coil_Y', 'L2_coil_X', 'L2_coil_Y', 'C_coil_X',
         'C_coil_Y', 'R1_coil_X', 'R1_coil_Y', 'R2_coil_X', 'R2_coil_Y',
         'QUAL_IND', 'DOP', 'HEIGHT', 'CH_1', 'CH_2', 'CH_3', 'CH_4',
@@ -22,18 +19,21 @@ def process_file():
         'LINE', 'MARK', 'TIME', 'DATE']
 
     try:
+        print('\nSelect file...')
+        filepath = ps.select_file()
         # Attempt to read the file using Pandas
         df = pd.read_table(filepath, sep=r"\s+", skiprows=[0], names=colnames)
         dateOfData = df['DATE'].iloc[1]
         dateOfData = dateOfData.replace('/','')
-        # If successful, display the first few rows
+        
         print(f"File loaded successfully!\n")
 
     except Exception as e:
         # If there is any error, print an error message
-        print(f"Error: Unable to read the file. {e}")
+        print(f"Error: Unable to read the file or file not selected. {e}")
+        return # If there is an error or the file selector is canceled close the program
 
-    """CLEANING AND FIXING FORMAT"""
+    '''CLEANING AND FIXING FORMAT'''
     # Checking if 'DATE' and 'TIME' columns exist to proceed
     if 'DATE' in df.columns and 'TIME' in df.columns:
         df['DATETIME'] = df['DATE'] + ' ' + df['TIME']
@@ -51,7 +51,7 @@ def process_file():
         print(df.head())
         print('\n')
 
-
+    '''SPLIT DATA IN GROUPS'''
     # Identify each group and create sub dataframes
     group1 = df[['CH_1', 'CH_2', 'CH_3', 'CH_4',
                 'EM61_CURRENT', 'EM61_VOLT', 'EM61_DELAY',
@@ -87,7 +87,7 @@ def process_file():
     g4 = g4.rename(columns={'CH_1.3': 'CH_1', 'CH_2.3': 'CH_2', 'CH_3.3': 'CH_3', 'CH_4.3': 'CH_4'})
     g5 = g5.rename(columns={'CH_1.4': 'CH_1', 'CH_2.4': 'CH_2', 'CH_3.4': 'CH_3', 'CH_4.4': 'CH_4'})
 
-    """FINDING PEAK FOR EACH GROUP"""
+    '''FINDING PEAK FOR EACH GROUP'''
     # Find peak indexes
     g1peaks_idx,_= find_peaks(g1['CH_1'].iloc[0:800],prominence=100)
     g2peaks_idx,_= find_peaks(g2['CH_1'].iloc[0:800],prominence=100)
@@ -101,7 +101,7 @@ def process_file():
     g4peaks = g4[['CH_1','DATETIME']].iloc[g4peaks_idx]
     g5peaks = g5[['CH_1','DATETIME']].iloc[g5peaks_idx]
 
-    """DATAFRAME OF PEAKS"""
+    '''DATAFRAME OF PEAKS'''
     # Adding the GROUPNUM column to each dataframe before concatenation
     g1peaks['GROUPNUM'] = 1
     g2peaks['GROUPNUM'] = 2
@@ -135,8 +135,7 @@ def process_file():
         print(peaks)
         print('\n')
 
-    """PLOTTING"""
-
+    '''PLOTTING'''
     plotResponse = input("Enter 'Y' if you want to plot the groups: \n")
 
     if plotResponse == 'Y' or plotResponse == 'y':  
@@ -171,54 +170,42 @@ def process_file():
         fig.tight_layout()
         fig.set_figheight(6)
         fig.set_figwidth(10)
-        plt.show()
+        plt.show(block = False)
 
     '''EXPORTING GROUP-SENSOR TABLE SORTED'''
-    # Function to select a folder
-    def select_folder():
-        try:
-            root = tk.Tk()
-            root.withdraw()  # Hide the main window
-            filedirectory = askdirectory(title='Select folder')
-            root.destroy()
-            return filedirectory
-        except Exception as e:
-            print(f"Error during folder selection: {e}")
-            return None
-        
     # Prompt to export group-sensor table
     exprotop = input("Enter 'Y' to export the group-sensor table: \n").lower()
 
     if exprotop == "y":
         try:
-            print("Please select a folder...")
-            filedirectoyry = select_folder()
+            print('Select folder...')
+            filedirectory = ps.select_folder()
 
             # Check if the folder selection was successful
-            if not filedirectoyry:
+            if not filedirectory:
                 print("Folder selection failed or was canceled.")
             else:
                 inputfilename = input('Please enter the name of the file (Date included already): \n')
                 sheet_name = input('Enter sheet name: \n')
-                filename = f"{filedirectoyry}/{dateOfData}_{inputfilename}.xlsx"
+                filename = f"{filedirectory}/{dateOfData}_{inputfilename}.xlsx"
                 
-            # Check if file exists
-            if os.path.exists(filename):
-                with pd.ExcelWriter(filename, engine="openpyxl", mode="a") as writer:
-                    # Name the sheet based on the sensor or some identifier
-                    peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
-            else:
-                with pd.ExcelWriter(filename, engine="openpyxl") as writer:
-                    # Create a new file with the first sheet
-                    peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
+                # Check if file exists
+                if os.path.exists(filename):
+                    with pd.ExcelWriter(filename, engine="openpyxl", mode="a") as writer:
+                        # Name the sheet based on the sensor or some identifier
+                        peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
+                else:
+                    with pd.ExcelWriter(filename, engine="openpyxl") as writer:
+                        # Create a new file with the first sheet
+                        peaks.to_excel(writer, sheet_name=sheet_name, header=True, index=False)
 
-            print(f"Data exported successfully to {filename}\n")
+                print(f"Data exported successfully to {filename}\n")
 
         except Exception as e:
             print(f"Error while exporting: {e}")
 
     
-    """STORING SENSORS IN DATAFRAMES FOR EXPORTING"""
+    '''STORING SENSORS IN DATAFRAMES FOR EXPORTING'''
     # Create a dictionary of the group dataframes
     groups_dict = {1: g1, 2: g2, 3: g3, 4: g4, 5: g5}
     
@@ -263,7 +250,7 @@ def process_file():
                 # Prepare the data for export (XYZ format with coil X and Y values)
                 sensor_data_for_export = sensor_data
                 # Ask the path and file name
-                filedirectoyry = select_folder()
+                filedirectoyry = ps.select_folder()
                 inputfilename = input('Please enter the name of the file (Date included already): ')
                 filename = f"/{dateOfData}_{inputfilename}.xyz"
                 # File exported with custom name: Path + Date + Name + .xyz
