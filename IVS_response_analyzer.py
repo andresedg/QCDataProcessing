@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from pyproj import Transformer
+import path_selector as ps # Function created in another py file (Not library)
 
 # Set Pandas to display floating-point numbers in a more familiar format
 pd.set_option('display.float_format', '{:.2f}'.format)
@@ -10,9 +11,9 @@ pd.set_option('display.float_format', '{:.2f}'.format)
 # Function to process each sensor of 5 coil system IVS files. Exproted from 'multi_sensor_data_processor.py' tool 
 def EM61_5coil_ivs_file():
     # Prompt the user to enter the file path
-    filename = input("Please enter the full path of the file: ")
-    print('\n')
-
+    print('\nSelect file...')
+    filename = ps.select_file()
+    
     try:
         # Open the file, read the first line (header), and remove the '/' if it exists
         with open(filename, 'r') as file:
@@ -27,7 +28,8 @@ def EM61_5coil_ivs_file():
 
     except Exception as e:
         # If there is any error, print an error message
-        print(f"Error: Unable to read the file. {e}")
+        print(f"Error: Unable to read the file or file not selected. {e}")
+        return # If there is an error or the file selector is canceled close the program
 
     '''CLEANING AND FIXING FORMAT'''
 
@@ -134,8 +136,8 @@ def EM61_5coil_ivs_file():
 # Function to process EM61 regular IVS files. Imported directly from EM61 and converted to .xyz
 def EM61_ivs_file():
     # Prompt the user to enter the file path
-    filename = input("Please enter the full path of the file: ")
-    print('\n')
+    print('\nSelect file...')
+    filename = ps.select_file()
 
     columns = ['EAST', 'NORTH', 'STD-4-1', 'STD-4-2',
                'STD-4-3', 'STD-4-4', 'GPS Correction', 'TIME']
@@ -148,7 +150,8 @@ def EM61_ivs_file():
 
     except Exception as e:
         # If there is any error, print an error message
-        print(f"Error: Unable to read the file. {e}")
+        print(f"Error: Unable to read the file or file not selected. {e}")
+        return # If there is an error or the file selector is canceled close the program
 
      # Printing first lines of the data
     printOp = input("Enter 'Y' if you want to see the header of the data: \n").lower()
@@ -245,7 +248,7 @@ def EM61_ivs_file():
 # Main loop for menu
 def main_menu():
     while True:
-        print("What type of file are you going to process?")
+        print("\nWhat type of file are you going to process?")
         print("1) IVS: Single EM61 sensor file (from 5 Coil System)")
         print("2) IVS: Regular EM61 file")
         print("3) Exit")
