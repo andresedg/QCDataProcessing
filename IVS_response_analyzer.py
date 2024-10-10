@@ -33,6 +33,9 @@ def EM61_5coil_ivs_file():
 
     '''CLEANING AND FIXING FORMAT'''
 
+    # Removing first test peak
+    df = df.drop(df[df['LINE'] == 0].index)
+
     # Checking if 'DATE' and 'TIME' columns exist to proceed
     if 'DATE' in df.columns and 'TIME' in df.columns:
         df['DATETIME'] = df['DATE'] + ' ' + df['TIME']
@@ -69,6 +72,7 @@ def EM61_5coil_ivs_file():
     print(f"Transformation: {transformer} \n")
 
     '''CALCULATIONS'''
+
     # Calculate rolling statistic (median) without window shrinking
     df['CH_1_med'] = df['CH_1'].rolling(window=301, min_periods=1, center=True).median()
     df['CH_2_med'] = df['CH_2'].rolling(window=301, min_periods=1, center=True).median()
@@ -80,8 +84,6 @@ def EM61_5coil_ivs_file():
     df['CH_2_demed'] = df['CH_2'] - df['CH_2_med']
     df['CH_3_demed'] = df['CH_3'] - df['CH_3_med']
     df['CH_4_demed'] = df['CH_4'] - df['CH_4_med']
-
-    print(df[['CH_1_med','CH_2_med','CH_3_med','CH_4_med']])
 
     '''PEAKS FINDING'''
 
