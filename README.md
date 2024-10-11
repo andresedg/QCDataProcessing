@@ -85,7 +85,7 @@ L1_coil_X, L1_coil_Y, L2_coil_X, L2_coil_Y, C_coil_X, C_coil_Y, ...
 
 Ensure that the `DATE` and `TIME` columns exist and are in the format `MM/DD/YY HH:MM:SS.FFF`.
 
-##Multiple File Processing
+## Multiple File Processing
 
 After processing one file, the script will prompt you to enter another file or exit. This allows users to efficiently handle multiple data files in a single session.
 
