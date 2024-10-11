@@ -253,6 +253,9 @@ def process_file():
                 filedirectoyry = ps.select_folder()
                 inputfilename = input('Please enter the name of the file (Date included already): ')
                 filename = f"/{dateOfData}_{inputfilename}.xyz"
+                # Add '/' and tab space in the header
+                header = ['/' + col for col in sensor_data_for_export.columns]
+                sensor_data_for_export.columns = header
                 # File exported with custom name: Path + Date + Name + .xyz
                 sensor_data_for_export.to_csv(filedirectoyry + filename, sep=' ', index=False, header=True)
                 print(f"Data exported successfully to {filename}\n")
