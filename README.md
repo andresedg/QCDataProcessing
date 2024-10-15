@@ -60,7 +60,7 @@ py -m pip install -r requirements.txt
    ```
 
    Or press the run button (right upper corner)
-4. When file explorer window appear, select a file of the EM61 5 Coil System data file (.xyz) with all the sensors. Ensure that the file follows the required format.
+4. When file explorer window appear, select a file of the EM61 5 Coil System data file (.xyz) with all the sensors. Ensure that the file is in the same workspace (folder) as the project. So, you should be able to see it in the file panel on the left.
 5. Optional user interactions:
 
    - To display the header of the data, type `Y` when prompted.
