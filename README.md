@@ -26,7 +26,19 @@ Before running the script, ensure you have the following Python packages install
 You can install them using pip:
 
 ```bash
-pip install numpy pandas matplotlib scipy pyproj `PyQt5
+pip install numpy pandas matplotlib scipy pyproj PyQt5
+```
+
+If that one does not work, use:
+
+```python
+py -m pip install numpy pandas matplotlib scipy pyproj PyQt5
+```
+
+In order to install all the requirements, use:
+
+```python
+py -m pip install -r requirements.txt
 ```
 
 ## How to Use
@@ -47,10 +59,9 @@ pip install numpy pandas matplotlib scipy pyproj `PyQt5
    python main.py
    ```
 
-    Or press the run button (right upper corner)
-
-1. When file explorer window appear, select a file of the EM61 5 Coil System data file (.xyz) with all the sensors. Ensure that the file follows the required format.
-2. Optional user interactions:
+   Or press the run button (right upper corner)
+4. When file explorer window appear, select a file of the EM61 5 Coil System data file (.xyz) with all the sensors. Ensure that the file follows the required format.
+5. Optional user interactions:
 
    - To display the header of the data, type `Y` when prompted.
    - To show the sensor-group table type `Y` when prompted
@@ -63,7 +74,7 @@ pip install numpy pandas matplotlib scipy pyproj `PyQt5
      - To plot sensor data type `Y`
      - To export the data type `Y`, select a folder and enter the name for the file that is been exported
      - Select another sensor from the file or type `exit` to continue
-3. After processing a file, the program will ask if you want to select another file. Select a new file or type exit to end the session.
+6. After processing a file, the program will ask if you want to select another file. Select a new file or type exit to end the session.
 
 ## Data Analysis
 
@@ -99,7 +110,7 @@ After processing one file, the script will prompt you to enter another file or e
 
 ## Pushing changes from local repository
 
-If you want to modify the code and update the repository. You can follow this steps in order to update all your changes. 
+If you want to modify the code and update the repository. You can follow this steps in order to update all your changes.
 
 ##### VS Code Activity bar
 
